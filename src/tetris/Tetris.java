@@ -31,6 +31,8 @@ public class Tetris implements Runnable {
     int fallingShapeCol;
 
     boolean fastDrop = false;
+
+    boolean darkMode = false;
  
     final int[][] grid = new int[nRows][nCols];
  
@@ -40,7 +42,7 @@ public class Tetris implements Runnable {
  
     public Tetris() {
         c = new Console(dim.width, dim.height, "Tetris");
-        c.setBackground(bgColor);
+        setUIColour(UIColourTypes.BG);
 
         initGrid();
         selectShape();
@@ -52,12 +54,8 @@ public class Tetris implements Runnable {
  
             @Override
             public void keyPressed(KeyEvent e) {
- 
-                if (scoreboard.isGameOver())
-                    return;
- 
+
                 switch (e.getKeyCode()) {
- 
                     case KeyEvent.VK_UP:
                         if (canRotate(fallingShape))
                             rotate(fallingShape);
@@ -74,6 +72,16 @@ public class Tetris implements Runnable {
                         break;
  
                     case KeyEvent.VK_DOWN:
+                        if (scoreboard.isGameOver()) {
+                            startNewGame();
+                            draw();
+                        }
+                        else {
+                            fastDrop = true;
+                        }
+                        break;
+
+                    case KeyEvent.VK_SPACE:
                         if (!fastDown) {
                             fastDown = true;
 
@@ -86,15 +94,11 @@ public class Tetris implements Runnable {
                         }
                         break;
 
-                    case KeyEvent.VK_SPACE:
-                        if (scoreboard.isGameOver()) {
-                            startNewGame();
-                            draw();
-                        }
-                        else {
-                            fastDrop = true;
-                        }
+                    case KeyEvent.VK_ENTER:
+                        darkMode = !darkMode;
+                        draw();
                         break;
+                        
                 }
                 draw();
             }
@@ -102,12 +106,68 @@ public class Tetris implements Runnable {
             @Override
             public void keyReleased(KeyEvent e) {
                 switch(e.getKeyCode()) {
-                    case KeyEvent.VK_SPACE:
+                    case KeyEvent.VK_DOWN:
                         fastDrop = false;
+                        break;
+
+                    case KeyEvent.VK_SPACE:
+                        fastDown = false;
                         break;
                 }
             }
         });
+    }
+
+    void setUIColour(UIColourTypes colour) {
+        switch (colour) {
+            case SQUARE_BORDER:
+                if (darkMode == true) {
+                    c.setColor(darkSquareBorder);
+                    return;
+                }
+                c.setColor(squareBorder);
+                return;
+            case TITLE_BG:
+                if (darkMode == true) {
+                    c.setColor(darkTitlebgColour);
+                    return;
+                }
+                c.setColor(titlebgColour);
+                return;
+            case TEXT:
+                if (darkMode == true) {
+                    c.setColor(darkTextColour);
+                    return;
+                }
+                c.setColor(textColour);
+                return;
+            case BG:
+                /*
+                --------------------
+                FIX BACKGROUND COLOUR SWITCHING
+                --------------------
+                */
+                if (darkMode == true) {
+                    c.setBackground(darkbgColour);
+                    return;
+                }
+                c.setBackground(bgColour);
+                return;
+            case GRID:
+                if (darkMode == true) {
+                    c.setColor(darkGridColour);
+                    return;
+                }
+                c.setColor(gridColour);
+                return;
+            case GRID_BORDER:
+                if (darkMode == true) {
+                    c.setColor(darkGridBorderColour);
+                    return;
+                }
+                c.setColor(gridBorderColour);
+                return;
+        }
     }
  
     void selectShape() {
@@ -148,7 +208,7 @@ public class Tetris implements Runnable {
 
     int currentSpeed() {
         if (fastDrop == true) {
-            return 75;
+            return fastDropSpeed;
         }
         return scoreboard.getSpeed();
     }
@@ -176,29 +236,36 @@ public class Tetris implements Runnable {
     void drawStartScreen() {
         c.setFont(mainFont);
  
-        c.setColor(titlebgColor);
+        setUIColour(UIColourTypes.TITLE_BG);
         c.fillRect(titleRect.x, titleRect.y, titleRect.width, titleRect.height);
         c.fillRect(clickRect.x, clickRect.y, clickRect.width, clickRect.height);
  
-        c.setColor(textColor);
+        setUIColour(UIColourTypes.TEXT);
         c.drawString("Tetris", titleX, titleY);
  
         c.setFont(smallFont);
         c.drawString("Press Space to Start", startX, startY);
     }
  
-    void drawSquare(int colorIndex, int r, int i) {
-        c.setColor(colors[colorIndex]);
-        c.fillRect(leftMargin + i * blockSize, topMargin + r * blockSize, blockSize, blockSize);
+    void drawSquare(int colorIndex, int r, int i, boolean preview) {
+        c.setColor(colours[colorIndex]);
 
-        c.setColor(squareBorder);
+        if (preview == true) 
+            c.fillRect(previewCenterX + i * blockSize, previewCenterY + r * blockSize, blockSize, blockSize);
+        else
+            c.fillRect(leftMargin + i * blockSize, topMargin + r * blockSize, blockSize, blockSize);
+
+        setUIColour(UIColourTypes.SQUARE_BORDER);
         
-        c.drawRect(leftMargin + i * blockSize, topMargin + r * blockSize, blockSize, blockSize);
+        if (preview == true)
+            c.drawRect(previewCenterX + i * blockSize, previewCenterY + r * blockSize, blockSize, blockSize);
+        else
+            c.drawRect(leftMargin + i * blockSize, topMargin + r * blockSize, blockSize, blockSize);
     }
  
     void drawUI() {
         // grid background
-        c.setColor(gridColor);
+        setUIColour(UIColourTypes.GRID);
         c.fillRect(gridRect.x, gridRect.y, gridRect.width, gridRect.height);
  
         // the blocks dropped in the grid
@@ -206,19 +273,19 @@ public class Tetris implements Runnable {
             for (int c = 0; c < nCols; c++) {
                 int idx = grid[r][c];
                 if (idx > EMPTY)
-                    drawSquare(idx, r, c);
+                    drawSquare(idx, r, c, false);
             }
         }
  
         // the borders of grid and preview panel
-        c.setColor(gridBorderColor);
+        setUIColour(UIColourTypes.GRID_BORDER);
         c.drawRect(gridRect.x, gridRect.y, gridRect.width, gridRect.height);
         c.drawRect(previewRect.x, previewRect.y, previewRect.width, previewRect.height);
  
         // scoreboard
         int x = scoreX;
         int y = scoreY;
-        c.setColor(textColor);
+        setUIColour(UIColourTypes.TEXT);
         c.setFont(smallFont);
         c.drawString(format("highscore  %6d", scoreboard.getTopscore()), x, y);
         c.drawString(format("level      %6d", scoreboard.getLevel()), x, y + 30);
@@ -233,19 +300,16 @@ public class Tetris implements Runnable {
             maxX = max(maxX, p[0]);
             maxY = max(maxY, p[1]);
         }
-        double cx = previewCenterX - ((minX + maxX + 1) / 2.0 * blockSize);
-        double cy = previewCenterY - ((minY + maxY + 1) / 2.0 * blockSize);
- 
-        //g.translate(cx, cy);
-        for (int[] p : nextShape.shape)
-            drawSquare(nextShape.ordinal(), p[1], p[0]);
-        //g.translate(-cx, -cy);
+
+        for (int[] p : nextShape.shape) {
+            drawSquare(nextShape.ordinal(), p[1], p[0], true);
+        }
     }
  
     void drawFallingShape() {
         int idx = fallingShape.ordinal();
         for (int[] p : fallingShape.pos)
-            drawSquare(idx, fallingShapeRow + p[1], fallingShapeCol + p[0]);
+            drawSquare(idx, fallingShapeRow + p[1], fallingShapeCol + p[0], false);
     }
 
     void draw() {

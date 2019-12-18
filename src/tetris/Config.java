@@ -3,7 +3,16 @@ package tetris;
 import java.awt.*;
  
 final class Config {
-    final static Color[] colors = {Color.green, Color.red, Color.blue,
+    public enum UIColourTypes {
+        SQUARE_BORDER,
+        TITLE_BG,
+        TEXT,
+        BG,
+        GRID,
+        GRID_BORDER
+    }
+
+    final static Color[] colours = {Color.green, Color.red, Color.blue,
         Color.pink, Color.orange, Color.cyan, Color.magenta};
  
     final static Font mainFont = new Font("Monospaced", Font.BOLD, 48);
@@ -29,11 +38,20 @@ final class Config {
     final static int startY = 400;
     final static int previewCenterX = 467;
     final static int previewCenterY = 97;
+
+    final static int fastDropSpeed = 50;
  
-    final static Color squareBorder = Color.white;
-    final static Color titlebgColor = Color.white;
-    final static Color textColor = Color.black;
-    final static Color bgColor = new Color(0xDDEEFF);
-    final static Color gridColor = new Color(0xBECFEA);
-    final static Color gridBorderColor = new Color(0x7788AA);
+    final static Color squareBorder = Color.black;
+    final static Color titlebgColour = Color.white;
+    final static Color textColour = Color.black;
+    final static Color bgColour = new Color(0xDDEEFF);
+    final static Color gridColour = new Color(0xBECFEA);
+    final static Color gridBorderColour = new Color(0x7788AA);
+
+    final static Color darkSquareBorder = Color.white;
+    final static Color darkTitlebgColour = Color.black;
+    final static Color darkTextColour = Color.black;
+    final static Color darkbgColour = new Color(0x121212);
+    final static Color darkGridColour = new Color(0x212121);
+    final static Color darkGridBorderColour = new Color(0x7788AA);
 }
