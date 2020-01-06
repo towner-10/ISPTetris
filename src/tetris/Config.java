@@ -23,7 +23,7 @@ final class Config {
     final static Rectangle gridRect = new Rectangle(46, 47, 308, 517);
     final static Rectangle previewRect = new Rectangle(387, 47, 200, 200);
     final static Rectangle titleRect = new Rectangle(100, 85, 252, 100);
-    final static Rectangle clickRect = new Rectangle(50, 375, 252, 40);
+    final static Rectangle clickRect = new Rectangle(100, 375, 252, 40);
      
     final static int blockSize = 30;
     final static int nRows = 18;
@@ -41,17 +41,10 @@ final class Config {
 
     final static int fastDropSpeed = 50;
  
-    final static Color squareBorder = Color.black;
-    final static Color titlebgColour = Color.white;
-    final static Color textColour = Color.black;
-    final static Color bgColour = new Color(0xDDEEFF);
-    final static Color gridColour = new Color(0xBECFEA);
-    final static Color gridBorderColour = new Color(0x7788AA);
-
-    final static Color darkSquareBorder = Color.white;
-    final static Color darkTitlebgColour = Color.black;
-    final static Color darkTextColour = Color.black;
-    final static Color darkbgColour = new Color(0x121212);
-    final static Color darkGridColour = new Color(0x212121);
-    final static Color darkGridBorderColour = new Color(0x7788AA);
+    final static Color squareBorder = Color.white;
+    final static Color titlebgColour = Color.black;
+    final static Color textColour = Color.white;
+    final static Color bgColour = new Color(0x121212);
+    final static Color gridColour = new Color(0x212121);
+    final static Color gridBorderColour = Color.white;
 }

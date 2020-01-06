@@ -42,7 +42,7 @@ public class Tetris implements Runnable {
  
     public Tetris() {
         c = new Console(dim.width, dim.height, "Tetris");
-        setUIColour(UIColourTypes.BG);
+        c.setBackgroundColor(bgColour);
 
         initGrid();
         selectShape();
@@ -72,17 +72,11 @@ public class Tetris implements Runnable {
                         break;
  
                     case KeyEvent.VK_DOWN:
-                        if (scoreboard.isGameOver()) {
-                            startNewGame();
-                            draw();
-                        }
-                        else {
-                            fastDrop = true;
-                        }
+                        fastDrop = true;
                         break;
 
                     case KeyEvent.VK_SPACE:
-                        if (!fastDown) {
+                        if (fastDown == false && scoreboard.isGameOver() == false) {
                             fastDown = true;
 
                             while (canMove(fallingShape, Dir.down)) {
@@ -91,6 +85,10 @@ public class Tetris implements Runnable {
                             }
 
                             shapeHasLanded();
+                        }
+                        if (scoreboard.isGameOver() == true) {
+                            startNewGame();
+                            draw();
                         }
                         break;
 
@@ -117,58 +115,6 @@ public class Tetris implements Runnable {
             }
         });
     }
-
-    void setUIColour(UIColourTypes colour) {
-        switch (colour) {
-            case SQUARE_BORDER:
-                if (darkMode == true) {
-                    c.setColor(darkSquareBorder);
-                    return;
-                }
-                c.setColor(squareBorder);
-                return;
-            case TITLE_BG:
-                if (darkMode == true) {
-                    c.setColor(darkTitlebgColour);
-                    return;
-                }
-                c.setColor(titlebgColour);
-                return;
-            case TEXT:
-                if (darkMode == true) {
-                    c.setColor(darkTextColour);
-                    return;
-                }
-                c.setColor(textColour);
-                return;
-            case BG:
-                /*
-                --------------------
-                FIX BACKGROUND COLOUR SWITCHING
-                --------------------
-                */
-                if (darkMode == true) {
-                    c.setBackground(darkbgColour);
-                    return;
-                }
-                c.setBackground(bgColour);
-                return;
-            case GRID:
-                if (darkMode == true) {
-                    c.setColor(darkGridColour);
-                    return;
-                }
-                c.setColor(gridColour);
-                return;
-            case GRID_BORDER:
-                if (darkMode == true) {
-                    c.setColor(darkGridBorderColour);
-                    return;
-                }
-                c.setColor(gridBorderColour);
-                return;
-        }
-    }
  
     void selectShape() {
         fallingShapeRow = 1;
@@ -181,7 +127,6 @@ public class Tetris implements Runnable {
     }
  
     void startNewGame() {
-        stop();
         initGrid();
         selectShape();
         scoreboard.reset();
@@ -193,6 +138,15 @@ public class Tetris implements Runnable {
             Thread tmp = fallingThread;
             fallingThread = null;
             tmp.interrupt();
+        }
+    }
+
+    void printGrid() {
+        for (int r = 0; r < nRows; r++) {
+            for (int c = 0; c < nCols; c++) {
+                System.out.print(grid[r][c] + ", ");
+            }
+            System.out.println();
         }
     }
  
@@ -213,6 +167,7 @@ public class Tetris implements Runnable {
         return scoreboard.getSpeed();
     }
  
+    // This method is like a while true loop that runs automatically when you have a thread running
     @Override
     public void run() {
         while (Thread.currentThread() == fallingThread) {
@@ -236,11 +191,11 @@ public class Tetris implements Runnable {
     void drawStartScreen() {
         c.setFont(mainFont);
  
-        setUIColour(UIColourTypes.TITLE_BG);
+        c.setColor(titlebgColour);
         c.fillRect(titleRect.x, titleRect.y, titleRect.width, titleRect.height);
         c.fillRect(clickRect.x, clickRect.y, clickRect.width, clickRect.height);
  
-        setUIColour(UIColourTypes.TEXT);
+        c.setColor(textColour);
         c.drawString("Tetris", titleX, titleY);
  
         c.setFont(smallFont);
@@ -255,7 +210,7 @@ public class Tetris implements Runnable {
         else
             c.fillRect(leftMargin + i * blockSize, topMargin + r * blockSize, blockSize, blockSize);
 
-        setUIColour(UIColourTypes.SQUARE_BORDER);
+        c.setColor(squareBorder);
         
         if (preview == true)
             c.drawRect(previewCenterX + i * blockSize, previewCenterY + r * blockSize, blockSize, blockSize);
@@ -265,8 +220,15 @@ public class Tetris implements Runnable {
  
     void drawUI() {
         // grid background
-        setUIColour(UIColourTypes.GRID);
+        c.setColor(gridColour);
         c.fillRect(gridRect.x, gridRect.y, gridRect.width, gridRect.height);
+
+        c.setColor(gridBorderColour);
+        for (int i = 0; i < nRows - 1; i++) {
+            for (int j = 1; j < nCols - 1; j++) {
+                c.drawRect(leftMargin + j * blockSize, topMargin + i * blockSize, blockSize, blockSize);
+            }
+        }
  
         // the blocks dropped in the grid
         for (int r = 0; r < nRows; r++) {
@@ -278,14 +240,15 @@ public class Tetris implements Runnable {
         }
  
         // the borders of grid and preview panel
-        setUIColour(UIColourTypes.GRID_BORDER);
+        c.setColor(gridBorderColour);
         c.drawRect(gridRect.x, gridRect.y, gridRect.width, gridRect.height);
         c.drawRect(previewRect.x, previewRect.y, previewRect.width, previewRect.height);
  
         // scoreboard
         int x = scoreX;
         int y = scoreY;
-        setUIColour(UIColourTypes.TEXT);
+        
+        c.setColor(textColour);
         c.setFont(smallFont);
         c.drawString(format("highscore  %6d", scoreboard.getTopscore()), x, y);
         c.drawString(format("level      %6d", scoreboard.getLevel()), x, y + 30);
