@@ -6,8 +6,15 @@ import static java.lang.String.format;
 import java.util.*;
 import static tetris.Config.*;
 import hsa_ufa.Console;
- 
+
+/*
+This project demonstrates my knowledge of the course material and my own learning. I show my knowledge of object-oriented programming,
+variables, if-else statements, for-loops, threads for more performant code, 
+*/
+
 public class Tetris implements Runnable {
+    
+    // Control the direction
     enum Dir {
         right(1, 0), down(0, 1), left(-1, 0);
  
@@ -15,7 +22,9 @@ public class Tetris implements Runnable {
             this.x = x;
             this.y = y;
         }
-        final int x, y;
+
+        final int x;
+        final int y;
     };
  
     public static final int EMPTY = -1;
@@ -30,9 +39,8 @@ public class Tetris implements Runnable {
     int fallingShapeRow;
     int fallingShapeCol;
 
+    // Fast dropping the shape
     boolean fastDrop = false;
-
-    boolean darkMode = false;
  
     final int[][] grid = new int[nRows][nCols];
  
@@ -48,13 +56,17 @@ public class Tetris implements Runnable {
         selectShape();
 
         startNewGame();
- 
+        
+        /*
+        I wanted to add a better way of detecting input in this program so I decided to use the KeyListener
+        https://docs.oracle.com/javase/7/docs/api/java/awt/event/KeyListener.html
+        I am basically declaring a class within a class here. I override the keyPressed method to add my custom code.
+        */
         c.addKeyListener(new KeyAdapter() {
             boolean fastDown;
  
             @Override
             public void keyPressed(KeyEvent e) {
-
                 switch (e.getKeyCode()) {
                     case KeyEvent.VK_UP:
                         if (canRotate(fallingShape))
@@ -91,12 +103,6 @@ public class Tetris implements Runnable {
                             draw();
                         }
                         break;
-
-                    case KeyEvent.VK_ENTER:
-                        darkMode = !darkMode;
-                        draw();
-                        break;
-                        
                 }
                 draw();
             }
@@ -250,10 +256,10 @@ public class Tetris implements Runnable {
         
         c.setColor(textColour);
         c.setFont(smallFont);
-        c.drawString(format("highscore  %6d", scoreboard.getTopscore()), x, y);
-        c.drawString(format("level      %6d", scoreboard.getLevel()), x, y + 30);
-        c.drawString(format("lines      %6d", scoreboard.getLines()), x, y + 60);
-        c.drawString(format("score      %6d", scoreboard.getScore()), x, y + 90);
+        c.drawString(format("Highscore  %6d", scoreboard.getTopscore()), x, y);
+        c.drawString(format("Level      %6d", scoreboard.getLevel()), x, y + 30);
+        c.drawString(format("Lines      %6d", scoreboard.getLines()), x, y + 60);
+        c.drawString(format("Score      %6d", scoreboard.getScore()), x, y + 90);
  
         // preview
         int minX = 5, minY = 5, maxX = 0, maxY = 0;

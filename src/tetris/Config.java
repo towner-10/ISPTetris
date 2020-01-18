@@ -18,8 +18,10 @@ final class Config {
     final static Font mainFont = new Font("Monospaced", Font.BOLD, 48);
     final static Font smallFont = mainFont.deriveFont(Font.BOLD, 18);
  
+    // Window Dimensions (cleaner way to hold multiple variables for same object)
     final static Dimension dim = new Dimension(640, 640);
  
+    // Rectangles for boxes in game (cleaner way to hold multiple variables for same object)
     final static Rectangle gridRect = new Rectangle(46, 47, 308, 517);
     final static Rectangle previewRect = new Rectangle(387, 47, 200, 200);
     final static Rectangle titleRect = new Rectangle(100, 85, 252, 100);

@@ -1,0 +1,19 @@
+apply plugin: 'java'
+
+sourceSets {
+    main {
+        java {
+            srcDir 'src'
+        }
+    }
+}
+
+jar {
+    manifest {
+        attributes "Main-Class": "tetris.Tetris"
+    }
+ 
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}

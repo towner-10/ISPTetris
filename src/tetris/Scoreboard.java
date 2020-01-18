@@ -1,5 +1,6 @@
 package tetris;
  
+// Things in this class are pretty self-explanatory
 public class Scoreboard {
     static final int MAXLEVEL = 9;
  
