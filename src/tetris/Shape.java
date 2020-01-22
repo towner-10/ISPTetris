@@ -1,6 +1,7 @@
 package tetris;
 
 // Types of shapes for Tetris
+// Enumerators like this are prior knowledge for me
 enum Shape {
 
     // Different types of shapes

@@ -8,8 +8,12 @@ import static tetris.Config.*;
 import hsa_ufa.Console;
 
 /*
-This project demonstrates my knowledge of the course material and my own learning. I show my knowledge of object-oriented programming,
-variables, if-else statements, for-loops, threads for more performant code, 
+Description: Tetris with rules from the competitive Tetris game.
+
+Author: Collin Town
+
+Project: This project demonstrates my knowledge of the course material and my own learning. I show my knowledge of object-oriented programming,
+variables, if-else statements, for-loops, threads for more performant code.
 */
 
 public class Tetris implements Runnable {
@@ -44,6 +48,7 @@ public class Tetris implements Runnable {
  
     final int[][] grid = new int[nRows][nCols];
  
+    // https://www.geeksforgeeks.org/multithreading-in-java/
     Thread fallingThread;
     final Scoreboard scoreboard = new Scoreboard();
     static final Random rand = new Random();
